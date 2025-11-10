@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Login</title></head><body>
+<h1>Login</h1>
+<form id="f">
+  <label>Email: <input id="email" value="owner@dayton.local"></label><br>
+  <label>Password: <input id="password" type="password" value="change_me"></label><br>
+  <button>Login</button>
+</form>
+<pre id="out"></pre>
+<script>
+const f=document.getElementById('f');
+const out=document.getElementById('out');
+f.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const res = await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:document.getElementById('email').value,password:document.getElementById('password').value})});
+  const j = await res.json();
+  out.textContent = JSON.stringify(j,null,2);
+  if (j.token) {
+    localStorage.setItem('token', j.token);
+    out.textContent += '\nToken saved to localStorage';
+  }
+});
+</script>
+</body></html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Admin</title></head><body>
+<h1>Admin Dashboard (minimal)</h1>
+<p>Make sure you're logged in as owner@dayton.local (password: change_me if you used the seed).</p>
+
+<h2>Add Credit (non-spendable)</h2>
+<form id="add">
+  <label>User email: <input id="userEmail" value=""></label><br>
+  <label>Amount: <input id="amount" value="1000"></label><br>
+  <label>Note: <input id="note"></label><br>
+  <button>Add Credit</button>
+</form>
+<pre id="out1"></pre>
+
+<h2>Pending Transfers</h2>
+<button id="refresh">Refresh</button>
+<pre id="pending"></pre>
+
+<h2>Make Spendable</h2>
+<form id="spend">
+  <label>User email: <input id="s_userEmail" value=""></label><br>
+  <label>Amount: <input id="s_amount" value="100"></label><br>
+  <button>Make Spendable</button>
+</form>
+<pre id="out2"></pre>
+
+<script>
+function token(){return localStorage.getItem('token');}
+document.getElementById('add').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const r = await fetch('/api/admin/add-credit',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token()},body:JSON.stringify({userEmail:document.getElementById('userEmail').value,amount:document.getElementById('amount').value,note:document.getElementById('note').value})});
+  document.getElementById('out1').textContent = await r.text();
+});
+document.getElementById('refresh').addEventListener('click', async ()=>{
+  const r = await fetch('/api/admin/pending-transactions',{headers:{'authorization':'Bearer '+token()}});
+  document.getElementById('pending').textContent = JSON.stringify(await r.json(),null,2);
+});
+document.getElementById('spend').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const r = await fetch('/api/admin/make-spendable',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token()},body:JSON.stringify({userEmail:document.getElementById('s_userEmail').value,amount:document.getElementById('s_amount').value})});
+  document.getElementById('out2').textContent = await r.text();
+});
+</script>
+</body></html>
