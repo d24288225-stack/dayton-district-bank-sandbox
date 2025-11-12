@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const path =require('path');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -10,7 +11,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(express.static("client"));
+app.use(express.static(path.join(__dirname, 'client')));
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
@@ -185,8 +186,11 @@ app.post('/api/admin/make-spendable', auth, adminOnly, async (req,res) => {
 });
 
 // Basic static client for testing (serves files from /client)
-const path = require('path');
 app.use('/', express.static(path.join(__dirname, 'client')));
 
+app.get('*', (req, res) => {
+res.sendfile(path.join(__dirname, 'client', 'login.html'));
+});
+
 const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => console.log('Listening on', port));
+app.listen(port, '0.0.0.0', () => {console.log('Listening on ${port}')});
