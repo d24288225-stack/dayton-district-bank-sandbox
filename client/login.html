@@ -7,18 +7,6 @@
   <button>Login</button>
 </form>
 <pre id="out"></pre>
-<script>
-const f=document.getElementById('f');
-const out=document.getElementById('out');
-f.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const res = await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:document.getElementById('email').value,password:document.getElementById('password').value})});
-  const j = await res.json();
-  out.textContent = JSON.stringify(j,null,2);
-  if (j.token) {
-    localStorage.setItem('token', j.token);
-    out.textContent += '\nToken saved to localStorage';
-  }
-});
-</script>
-</body></html>
+<script src="js/login.js"></script>
+</body>
+</html>
